@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real Estate Investment Analysis</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9fafb;
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #4338ca;
+    }
+    .results {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f1f5f9;
+      border-radius: 0.5rem;
+    }
+    .results h2 {
+      margin-top: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .grid > div {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Real Estate Investment Analysis</h1>
+    <div>
+      <!-- Basic inputs -->
+      <label for="price">Purchase Price (€)</label>
+      <input id="price" type="number" placeholder="e.g. 200000" />
+
+      <label for="notary">Notary Fees (€)</label>
+      <input id="notary" type="number" placeholder="e.g. 15000" />
+
+      <label for="renovation">Renovation Cost (€)</label>
+      <input id="renovation" type="number" placeholder="e.g. 20000" />
+
+      <label for="annualTax">Annual Property Tax (€)</label>
+      <input id="annualTax" type="number" placeholder="e.g. 1200" />
+
+      <label for="insurance">Annual Insurance (€)</label>
+      <input id="insurance" type="number" placeholder="e.g. 300" />
+
+      <label for="adminFees">Annual Administration Fees (€)</label>
+      <input id="adminFees" type="number" placeholder="e.g. 200" />
+
+      <label for="maintenance">Annual Maintenance (€)</label>
+      <input id="maintenance" type="number" placeholder="e.g. 500" />
+
+      <label for="monthlyRent">Monthly Rent (€)</label>
+      <input id="monthlyRent" type="number" placeholder="e.g. 800" />
+
+      <label for="vacancyRate">Vacancy Rate (%)</label>
+      <input id="vacancyRate" type="number" placeholder="e.g. 5" />
+
+      <label for="managementFees">Annual Management Fees (€)</label>
+      <input id="managementFees" type="number" placeholder="e.g. 300" />
+
+      <!-- Mortgage inputs -->
+      <label for="loanAmount">Loan Amount (€)</label>
+      <input id="loanAmount" type="number" placeholder="e.g. 150000" />
+
+      <label for="interestRate">Interest Rate (%)</label>
+      <input id="interestRate" type="number" placeholder="e.g. 2" />
+
+      <label for="loanYears">Loan Duration (years)</label>
+      <input id="loanYears" type="number" placeholder="e.g. 20" />
+
+      <!-- Investment structure -->
+      <label for="structure">Investment Structure (France)</label>
+      <select id="structure">
+        <option value="sci-is">SCI IS</option>
+        <option value="sci-ir">SCI IR</option>
+        <option value="lmnp">LMNP</option>
+        <option value="nue-propriete">Nue-Propriété</option>
+        <option value="other">Other</option>
+      </select>
+
+      <button class="btn" onclick="calculate()">Calculate</button>
+    </div>
+
+    <div class="results" id="results" style="display: none;">
+      <h2>Results</h2>
+      <div id="kpis" class="grid"></div>
+    </div>
+  </div>
+
+  <script>
+    function calculateLoanPayment(principal, annualRate, years) {
+      if (!principal || !annualRate || !years) return 0;
+      let monthlyRate = annualRate / 100 / 12;
+      let n = years * 12;
+      if (monthlyRate === 0) return principal / n;
+      return principal * (monthlyRate * Math.pow(1 + monthlyRate, n)) / (Math.pow(1 + monthlyRate, n) - 1);
+    }
+
+    function calculate() {
+      const price = parseFloat(document.getElementById('price').value) || 0;
+      const notary = parseFloat(document.getElementById('notary').value) || 0;
+      const renovation = parseFloat(document.getElementById('renovation').value) || 0;
+      const annualTax = parseFloat(document.getElementById('annualTax').value) || 0;
+      const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+      const adminFees = parseFloat(document.getElementById('adminFees').value) || 0;
+      const maintenance = parseFloat(document.getElementById('maintenance').value) || 0;
+      const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 0;
+      const vacancyRate = parseFloat(document.getElementById('vacancyRate').value) || 0;
+      const managementFees = parseFloat(document.getElementById('managementFees').value) || 0;
+      const loanAmount = parseFloat(document.getElementById('loanAmount').value) || 0;
+      const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+      const loanYears = parseFloat(document.getElementById('loanYears').value) || 0;
+      const structure = document.getElementById('structure').value;
+
+      // Total initial cost
+      const totalPurchaseCost = price + notary + renovation;
+
+      // Monthly loan payment
+      const monthlyLoan = calculateLoanPayment(loanAmount, interestRate, loanYears);
+
+      // Annual gross rent
+      const annualGrossRent = monthlyRent * 12;
+
+      // Adjust for vacancy
+      const effectiveRent = annualGrossRent * (1 - vacancyRate / 100);
+
+      // Operating expenses
+      const operatingExpenses = annualTax + insurance + adminFees + maintenance + managementFees;
+
+      // Net operating income (before mortgage)
+      const noi = effectiveRent - operatingExpenses;
+
+      // Annual debt service
+      const annualDebtService = monthlyLoan * 12;
+
+      // Cash flow after debt
+      const annualCashFlow = noi - annualDebtService;
+
+      // ROI
+      const totalInvestment = totalPurchaseCost; // ignoring any deposit/loan distribution for simplicity
+      const roi = (annualCashFlow / totalInvestment) * 100;
+
+      // Break-even in years
+      let breakEven = 0;
+      if (annualCashFlow > 0) {
+        breakEven = totalInvestment / annualCashFlow;
+      }
+
+      // Show results
+      document.getElementById('results').style.display = 'block';
+      const kpis = [
+        { label: 'Total Purchase Cost', value: `€ ${totalPurchaseCost.toFixed(2)}`},
+        { label: 'Monthly Loan Payment', value: `€ ${monthlyLoan.toFixed(2)}`},
+        { label: 'Annual Gross Rent', value: `€ ${annualGrossRent.toFixed(2)}`},
+        { label: 'Effective Annual Rent (Vacancy)', value: `€ ${effectiveRent.toFixed(2)}`},
+        { label: 'Operating Expenses (Annual)', value: `€ ${operatingExpenses.toFixed(2)}`},
+        { label: 'Net Operating Income (NOI)', value: `€ ${noi.toFixed(2)}`},
+        { label: 'Annual Debt Service', value: `€ ${annualDebtService.toFixed(2)}`},
+        { label: 'Annual Cash Flow', value: `€ ${annualCashFlow.toFixed(2)}`},
+        { label: 'ROI (%)', value: `${roi.toFixed(2)}%`},
+        { label: 'Break Even (years)', value: breakEven === 0 ? 'N/A' : breakEven.toFixed(2)},
+        { label: 'Structure', value: structure.toUpperCase() },
+      ];
+
+      const kpisContainer = document.getElementById('kpis');
+      kpisContainer.innerHTML = '';
+      kpis.forEach(k => {
+        const div = document.createElement('div');
+        div.innerHTML = `<h3>${k.label}</h3><p>${k.value}</p>`;
+        kpisContainer.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
